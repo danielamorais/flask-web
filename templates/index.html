@@ -1,0 +1,88 @@
+<script data-require="angular.js@1.0.x" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"
+        data-semver="1.0.7"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<link href="/static/css/bootstrap-social.css"  rel="stylesheet">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<script>
+
+    var app = angular.module('listinha', []);
+    //Resolve the conflict between Jinja2 and AngularJS
+    app.config(['$interpolateProvider', function ($interpolateProvider) {
+        $interpolateProvider.startSymbol('{[');
+        $interpolateProvider.endSymbol(']}');
+    }]);
+
+    app.controller('MainCtrl', function ($scope, $http) {
+        $scope.persons = [];
+        $http({
+            method: 'GET',
+            url: '/getAll'
+        }).then(function successCallback(data, status, headers, config) {
+            var obj = angular.toJson(data);
+            var jsonobject = JSON.parse(obj);
+            $scope.persons = jsonobject.data;
+            console.log(angular.toJson($scope.persons[0]));
+            console.log($scope.persons.length)
+        }, function errorCallback(error) {
+        });
+
+        $scope.send = function () {
+        };
+
+    });
+</script>
+
+<html ng-app="listinha">
+<head>
+  <meta property="og:url" content="http://0.0.0.0:8080" />
+  <meta property="og:type"  content="abcedfgh" />
+  <meta property="og:title" content="Your Website Title" />
+  <meta property="og:description" content="Your description" />
+  <meta property="og:image" content="http://res.cloudinary.com/tars/image/upload/0225f35d1829427ba0fcf1c3234af0fc.jpg" />
+   <meta property="og:site_name" content="Nome do meu site">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>List</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body ng-controller="MainCtrl">
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="row vertical-center-row">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input ng-model="name" type="text" class="form-control" placeholder="Insert a name...">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" ng-model="search" type="button" ng-click="send()">Search</button>
+          </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-18 col-sm-6 col-md-3" ng-repeat="person in persons | filter:name">
+          <div class="thumbnail">
+              <img src="http://res.cloudinary.com/tars/image/upload/{[person.picture.$uuid]}.jpg">
+              <div class="caption">
+                <h3>{[person.name]}</h3>
+                <h5><b>{[person.state]}</b></<h5>
+                {[person.picture.$uuid]}
+                <a href="#" class="btn btn-default btn-xs pull-right" role="button"><i class="glyphicon glyphicon-edit"></i></a>
+                <div class="row">
+                </div>
+            </div>
+          </div>
+        </div>
+</div>
+</body>
+</html>
